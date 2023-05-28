@@ -21,13 +21,15 @@ public class Character : MonoBehaviour
     //Xoa di object bat cu khi nao can thiet
     public virtual void OnDespawn()
 	{
-
+		
+		
 
 	}
 
 	protected virtual void OnDeath()
 	{
-
+		changeAnim("Die");
+		Invoke(nameof(OnDespawn), 1.5f);
 	}
 	protected void changeAnim(string animName)
 	{
@@ -41,6 +43,7 @@ public class Character : MonoBehaviour
 
 	public void OnHit(float damage)
 	{
+		Debug.Log("Deals 30 damage!");
         if(!IsDead)
 		{
             health -= damage;

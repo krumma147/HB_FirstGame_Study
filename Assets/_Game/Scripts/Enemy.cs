@@ -13,6 +13,8 @@ public class Enemy : Character
 	private Character target;
 	public Character Target => target; // quy tac dong goi cua huong doi tuong
 
+	[SerializeField] private GameObject attackArea;
+
 	void Update()
 	{
 		if(currentState != null)
@@ -24,15 +26,18 @@ public class Enemy : Character
 	{
 		base.OnInit();
 		ChangeState(new IdleState());
+		DeactiveAttack();
 	}
 
 	public override void OnDespawn()
 	{
 		base.OnDespawn();
+		Destroy(gameObject);
 	}
 
 	protected override void OnDeath()
 	{
+		ChangeState(null);
 		base.OnDeath();
 	}
 
@@ -83,6 +88,8 @@ public class Enemy : Character
 	public void Attack()
 	{
 		changeAnim("Attack");
+		ActiveAttack();
+		Invoke("DeactiveAttack", 0.5f);
 	}
 
 	public bool IsTargetInRange()
@@ -97,6 +104,8 @@ public class Enemy : Character
 		}
 	}
 
+
+
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.tag == "EnemyWall")
@@ -109,5 +118,15 @@ public class Enemy : Character
 	{
 		this.isRight = isRight;
 		transform.rotation = isRight ? Quaternion.Euler(Vector3.zero) : Quaternion.Euler(Vector3.up * 180);
+	}
+
+	private void ActiveAttack()
+	{
+		attackArea.SetActive(true);
+	}
+
+	private void DeactiveAttack()
+	{
+		attackArea.SetActive(false);
 	}
 }

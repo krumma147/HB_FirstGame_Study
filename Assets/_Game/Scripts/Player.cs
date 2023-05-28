@@ -9,6 +9,7 @@ public class Player : Character
 
 	[SerializeField] private Kunai kunaiPrefab;
 	[SerializeField] private Transform throwPoint;
+	[SerializeField] private GameObject attackArea;
 
 	private bool isGrounded = false;
 	private bool isJumping = false;
@@ -18,17 +19,10 @@ public class Player : Character
 	private float horizontal;
 	private Vector3 savePoint;
 
-	// Start is called before the first frame update
-	void Start()
-	{
-		savePoint = transform.position;
-	}
-
 	private void FixedUpdate()
 	{
 
 	}
-	// Bug jumping and moving sometime cause character to freeze in falling
 	// Update is called once per frame -- bug dùng fixedUpdate gây delay ở hàm input
 	void Update()
 	{
@@ -85,7 +79,7 @@ public class Player : Character
 		}
 
 		//Moving
-		if (Mathf.Abs(horizontal) > 0.1f && !isAttack) //&& isGrounded 
+		if (Mathf.Abs(horizontal) > 0.1f && !isAttack)
 		{
 			moving();
 		}
@@ -108,6 +102,8 @@ public class Player : Character
 		gamePoint = 0;
 		transform.position = savePoint;
 		changeAnim("Idle");
+		DeactiveAttack();
+		SavePoint();
 	}
 
 	protected override void OnDeath()
@@ -118,6 +114,7 @@ public class Player : Character
 	public override void OnDespawn()
 	{
 		base.OnDespawn();
+		OnInit();
 	}
 
 	private bool CheckGrounded()
@@ -137,6 +134,8 @@ public class Player : Character
 		changeAnim("Attack");
 		isAttack = true;
 		Invoke("ResetAttack", 0.5f);
+		ActiveAttack();
+		Invoke("DeactiveAttack", 0.5f);
 	}
 
 	private void Jump()
@@ -152,7 +151,7 @@ public class Player : Character
 		changeAnim("Throw");
 		isAttack = true;
 		Invoke("ResetAttack", 0.5f);
-		Instantiate(kunaiPrefab, throwPoint.position, throwPoint.rotation);
+		Instantiate(kunaiPrefab, throwPoint.position, throwPoint.rotation); //Create kunai prefab at the throw point 
 	}
 
 	private void ResetAttack()
@@ -165,6 +164,22 @@ public class Player : Character
 	{
 		rb.velocity = new Vector3(horizontal * Time.fixedDeltaTime * speed, rb.velocity.y);
 		transform.rotation = Quaternion.Euler(new Vector3(0, horizontal > 0 ? 0 : 180, 0));
+	}
+
+
+	internal void SavePoint()
+	{
+		savePoint = transform.position;
+	}
+
+	private void ActiveAttack()
+	{
+		attackArea.SetActive(true);
+	}
+
+	private void DeactiveAttack()
+	{
+		attackArea.SetActive(false);
 	}
 
 	//Xu ly va cham
@@ -190,8 +205,4 @@ public class Player : Character
 
 	}
 
-	internal void SavePoint()
-	{
-		savePoint = transform.position;
-	}
 }
