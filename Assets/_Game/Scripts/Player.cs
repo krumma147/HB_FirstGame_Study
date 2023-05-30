@@ -14,15 +14,10 @@ public class Player : Character
 	private bool isGrounded = false;
 	private bool isJumping = false;
 	private bool isAttack = false;
-	private bool isDead = false;
 	private int gamePoint = 0;
 	private float horizontal;
 	private Vector3 savePoint;
 
-	private void FixedUpdate()
-	{
-
-	}
 	// Update is called once per frame -- bug dùng fixedUpdate gây delay ở hàm input
 	void Update()
 	{
@@ -33,7 +28,7 @@ public class Player : Character
 		Debug.Log(horizontal);
 
 		// check if on ground so that player could jump
-		if (isDead)
+		if (IsDead)
 		{
 			return;
 		}
@@ -57,14 +52,14 @@ public class Player : Character
 			}
 
 			//Throw
-			if (Input.GetKeyDown(KeyCode.C) && isGrounded)
+			if (Input.GetKeyDown(KeyCode.C) && isGrounded && !isAttack)
 			{
 				Debug.Log("Throw!!");
 				Throw();
 			}
 
 			//Attack                        
-			if (Input.GetKeyDown(KeyCode.Z) && isGrounded)
+			if (Input.GetKeyDown(KeyCode.Z) && isGrounded && !isAttack)
 			{
 				Debug.Log("Attack!!");
 				Attack();
@@ -98,7 +93,6 @@ public class Player : Character
 		base.OnInit();
 		isJumping = false;
 		isAttack = false;
-		isDead = false;
 		gamePoint = 0;
 		transform.position = savePoint;
 		changeAnim("Idle");
@@ -109,6 +103,7 @@ public class Player : Character
 	protected override void OnDeath()
 	{
 		base.OnDeath();
+		
 	}
 
 	public override void OnDespawn()
@@ -162,7 +157,7 @@ public class Player : Character
 
 	private void moving()
 	{
-		rb.velocity = new Vector3(horizontal * Time.fixedDeltaTime * speed, rb.velocity.y);
+		rb.velocity = new Vector3(horizontal* speed, rb.velocity.y);
 		transform.rotation = Quaternion.Euler(new Vector3(0, horizontal > 0 ? 0 : 180, 0));
 	}
 
@@ -189,10 +184,9 @@ public class Player : Character
 		if (collision.CompareTag("DeadZone"))
 		{
 			//Destroy(collision.gameObject);
-			isDead = true;
-			changeAnim("Die");
+			OnHit(999f);
 			Debug.Log("Game over! Total Coin: " + gamePoint);
-			Invoke(nameof(OnInit), 1f);
+			//Invoke(nameof(OnInit), 1f);
 		}
 
 		//Khi nhat coin

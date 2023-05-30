@@ -17,7 +17,7 @@ public class Enemy : Character
 
 	void Update()
 	{
-		if(currentState != null)
+		if(currentState != null && !IsDead)
 		{
 			currentState.OnExecute(this);   
 		}
@@ -32,6 +32,7 @@ public class Enemy : Character
 	public override void OnDespawn()
 	{
 		base.OnDespawn();
+		Destroy(healthBar.gameObject);
 		Destroy(gameObject);
 	}
 
@@ -111,6 +112,13 @@ public class Enemy : Character
 		if (collision.tag == "EnemyWall")
 		{
 			ChangeDirection(!isRight);
+		}
+
+		//Khi roi xuong vuc
+		if (collision.CompareTag("DeadZone"))
+		{
+			OnHit(999f);
+			Invoke(nameof(OnInit), 1f);
 		}
 	}
 

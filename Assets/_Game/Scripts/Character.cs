@@ -6,8 +6,9 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     [SerializeField] private Animator anim;
-		
-    private string currentAnimName;
+	[SerializeField] protected HealthBar healthBar;	
+
+	private string currentAnimName;
     private float health;
     public bool IsDead => health <= 0; //Kiem tra trang thai cua doi tuong
     
@@ -15,7 +16,7 @@ public class Character : MonoBehaviour
     public virtual void OnInit()
 	{
         health = 100;
-
+		healthBar.OnInit(100, transform);
 	}
 
     //Xoa di object bat cu khi nao can thiet
@@ -29,7 +30,7 @@ public class Character : MonoBehaviour
 	protected virtual void OnDeath()
 	{
 		changeAnim("Die");
-		Invoke(nameof(OnDespawn), 1.5f);
+		Invoke(nameof(OnDespawn), 1f);
 	}
 	protected void changeAnim(string animName)
 	{
@@ -47,16 +48,16 @@ public class Character : MonoBehaviour
         if(!IsDead)
 		{
             health -= damage;
+
             if(IsDead)
 			{
-                OnDeath();
+				health = 0;
+
+				OnDeath();
 			}
+			healthBar.SetNewHP(health);
 		}
 	}
-
-	
-
-	
 
 	void Start()
 	{

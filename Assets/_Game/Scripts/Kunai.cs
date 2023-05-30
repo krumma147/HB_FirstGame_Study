@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Kunai : MonoBehaviour
 {
+    public GameObject hitVFX;
     public Rigidbody2D rb;
+    public GameObject spawnKunai;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,14 +28,19 @@ public class Kunai : MonoBehaviour
     public void OnDespawn()
     {
         Destroy(gameObject);
-    }
+		if (hitVFX != null)
+		{
+			Destroy(spawnKunai);
+		}
+	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.tag == "Enemy")
 		{
             collision.GetComponent<Character>().OnHit(30f);
-            OnDespawn();
-		}
+            spawnKunai = Instantiate(hitVFX, transform.position, transform.rotation);
+            OnDespawn();      
+        }
 	}
 }
