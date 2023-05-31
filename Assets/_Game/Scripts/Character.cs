@@ -6,7 +6,8 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     [SerializeField] private Animator anim;
-	[SerializeField] protected HealthBar healthBar;	
+	[SerializeField] protected HealthBar healthBar;
+	[SerializeField] protected CombatText combatTxtPrefab;
 
 	private string currentAnimName;
     private float health;
@@ -48,6 +49,7 @@ public class Character : MonoBehaviour
         if(!IsDead)
 		{
             health -= damage;
+			Instantiate(combatTxtPrefab, transform.position + Vector3.up, Quaternion.identity).OnInit(damage);// Khoi tao @doi tuong o @vi tri va @gocxoay  
 
             if(IsDead)
 			{

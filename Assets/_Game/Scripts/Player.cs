@@ -18,12 +18,17 @@ public class Player : Character
 	private float horizontal;
 	private Vector3 savePoint;
 
+	private void Awake()
+	{
+		gamePoint = PlayerPrefs.GetInt("gamePoint", 0);//Lưu data trong storage như trong local storage
+	}
+
 	// Update is called once per frame -- bug dùng fixedUpdate gây delay ở hàm input
 	void Update()
 	{
 		isGrounded = CheckGrounded();
 		//Nam trong khoang -1 -> 1 va = 0 neu ko bam j
-		horizontal = Input.GetAxisRaw("Horizontal");
+		//horizontal = Input.GetAxisRaw("Horizontal");
 
 		Debug.Log(horizontal);
 
@@ -40,7 +45,7 @@ public class Player : Character
 			}
 
 			//Jumping
-			if (Input.GetKeyDown(KeyCode.X) && isGrounded)
+			if (Input.GetKeyDown(KeyCode.X))
 			{
 				Jump();
 			}
@@ -52,14 +57,14 @@ public class Player : Character
 			}
 
 			//Throw
-			if (Input.GetKeyDown(KeyCode.C) && isGrounded && !isAttack)
+			if (Input.GetKeyDown(KeyCode.C))
 			{
 				Debug.Log("Throw!!");
 				Throw();
 			}
 
 			//Attack                        
-			if (Input.GetKeyDown(KeyCode.Z) && isGrounded && !isAttack)
+			if (Input.GetKeyDown(KeyCode.Z))
 			{
 				Debug.Log("Attack!!");
 				Attack();
@@ -98,6 +103,7 @@ public class Player : Character
 		changeAnim("Idle");
 		DeactiveAttack();
 		SavePoint();
+		UIManager.instance.setCoin(gamePoint);
 	}
 
 	protected override void OnDeath()
@@ -123,30 +129,53 @@ public class Player : Character
 
 	}
 
-	private void Attack()
+	public void Attack()
 	{
-		rb.velocity = Vector2.zero;
-		changeAnim("Attack");
-		isAttack = true;
-		Invoke("ResetAttack", 0.5f);
-		ActiveAttack();
-		Invoke("DeactiveAttack", 0.5f);
+		if (isGrounded && !isAttack) {
+			rb.velocity = Vector2.zero;
+			changeAnim("Attack");
+			isAttack = true;
+			Invoke("ResetAttack", 0.5f);
+			ActiveAttack();
+			Invoke("DeactiveAttack", 0.5f);
+		}
+		else
+		{
+			return;
+		}
+		
 	}
 
-	private void Jump()
+	public void Jump()
 	{
-		isJumping = true;
-		changeAnim("Jump");
-		rb.AddForce(jumpForce * Vector2.up);
+		if (isGrounded)
+		{
+			isJumping = true;
+			changeAnim("Jump");
+			rb.AddForce(jumpForce * Vector2.up);
+		}
+		else
+		{
+			return;
+		}
+		
 	}
 
-	private void Throw()
+	public void Throw()
 	{
-		rb.velocity = Vector2.zero;
-		changeAnim("Throw");
-		isAttack = true;
-		Invoke("ResetAttack", 0.5f);
-		Instantiate(kunaiPrefab, throwPoint.position, throwPoint.rotation); //Create kunai prefab at the throw point 
+		if(isGrounded && !isAttack)
+		{
+			rb.velocity = Vector2.zero;
+			changeAnim("Throw");
+			isAttack = true;
+			Invoke("ResetAttack", 0.5f);
+			Instantiate(kunaiPrefab, throwPoint.position, throwPoint.rotation); //Create kunai prefab at the throw point 
+		}
+		else
+		{
+			return;
+		}
+		
 	}
 
 	private void ResetAttack()
@@ -177,6 +206,11 @@ public class Player : Character
 		attackArea.SetActive(false);
 	}
 
+	public void setMove(float horizonal)
+	{
+		this.horizontal = horizonal;
+	}
+
 	//Xu ly va cham
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
@@ -194,7 +228,9 @@ public class Player : Character
 		{
 			Destroy(collision.gameObject);
 			gamePoint++;
-			Debug.Log("Total Coin: " + gamePoint);
+			PlayerPrefs.SetInt("gamePoint", gamePoint);
+			UIManager.instance.setCoin(gamePoint);
+			//Debug.Log("Total Coin: " + gamePoint);
 		}
 
 	}
