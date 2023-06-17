@@ -28,9 +28,9 @@ public class Player : Character
 	{
 		isGrounded = CheckGrounded();
 		//Nam trong khoang -1 -> 1 va = 0 neu ko bam j
-		//horizontal = Input.GetAxisRaw("Horizontal");
+		horizontal = Input.GetAxisRaw("Horizontal");
 
-		Debug.Log(horizontal);
+		//Debug.Log(horizontal);
 
 		// check if on ground so that player could jump
 		if (IsDead)
@@ -41,6 +41,7 @@ public class Player : Character
 		{
 			if (isJumping)
 			{
+				//Debug.Log("Jumping when in ground!");
 				return;
 			}
 
@@ -59,14 +60,14 @@ public class Player : Character
 			//Throw
 			if (Input.GetKeyDown(KeyCode.C))
 			{
-				Debug.Log("Throw!!");
+				//Debug.Log("Throw!!");
 				Throw();
 			}
 
 			//Attack                        
 			if (Input.GetKeyDown(KeyCode.Z))
 			{
-				Debug.Log("Attack!!");
+				//Debug.Log("Attack!!");
 				Attack();
 			}
 		}
@@ -120,8 +121,7 @@ public class Player : Character
 
 	private bool CheckGrounded()
 	{
-		isJumping = false;
-		Debug.DrawLine(transform.position, transform.position + Vector3.down * 1.1f, Color.red);
+		//Debug.DrawLine(transform.position, transform.position + Vector3.down * 1.1f, Color.red);
 
 		RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, groundLayer);
 
@@ -148,17 +148,9 @@ public class Player : Character
 
 	public void Jump()
 	{
-		if (isGrounded)
-		{
-			isJumping = true;
-			changeAnim("Jump");
-			rb.AddForce(jumpForce * Vector2.up);
-		}
-		else
-		{
-			return;
-		}
-		
+		isJumping = true;
+		changeAnim("Jump");
+		rb.AddForce(jumpForce * Vector2.up);
 	}
 
 	public void Throw()
