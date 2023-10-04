@@ -8,28 +8,47 @@ public class UIManager : MonoBehaviour
 {
     //Singleton
     public static UIManager instance;
-	[SerializeField] GameObject gameUI;
-	[SerializeField] GameObject homeUI;
+	[SerializeField] GameObject gamePanel;
+	[SerializeField] GameObject homePanel;
 	[SerializeField] GameObject SoundSetting;
 	[SerializeField] GameObject WelcomePanel;
 	[SerializeField] Text coinTxt;
-	//   public static UIManager Instance
-	//{
-	//	get
-	//	{
-	//		if(instance == null)
-	//		{
-	//			instance = FindObjectOfType<UIManager>();
-	//		}
-	//		return instance;
-	//	}
-	//}
 
-	private void Awake()
+	[SerializeField] Button startButton;
+    [SerializeField] Button openSettingButton;
+    [SerializeField] Toggle closeSettingButton;
+    [SerializeField] Button openWelcomeButton;
+    [SerializeField] Button closeWelcomeButton;
+
+	bool musicState = false;
+    //   public static UIManager Instance
+    //{
+    //	get
+    //	{
+    //		if(instance == null)
+    //		{
+    //			instance = FindObjectOfType<UIManager>();
+    //		}
+    //		return instance;
+    //	}
+    //}
+
+
+
+    private void Awake()
 	{
 		instance = this;
-		//Disable GameUI and enable HomeUI
-		DisableSoundSetting();
+		//Start Game
+		startButton.onClick.AddListener(StartGame);
+		//Sound
+        openSettingButton.onClick.AddListener(EnableSoundSetting);
+        closeSettingButton.onValueChanged.AddListener(ToggleSoundSetting);
+        //Welcome btn
+        openWelcomeButton.onClick.AddListener(EnableWelcomePanel);
+        closeWelcomeButton.onClick.AddListener(DisableWelcomePanel);
+		
+        //Disable GameUI and enable HomeUI
+		
 		DisableWelcomePanel();
 		ShowHomeUI();
 		//When click on start button then enable Game UI and disable HomeUI (stop game play too)
@@ -37,17 +56,18 @@ public class UIManager : MonoBehaviour
 
 	public void StartGame()
 	{
-		EnableGameUI();
-		DisableHomeUI();
+        EnableGamePanel();
+        DisableHomePanel();
 		// Add your game start logic here
 	}
 
 	public void ShowHomeUI()
 	{
-		DisableGameUI();
-		EnableHomeUI();
-		// Add any specific logic for showing the home UI here
-	}
+        DisableGamePanel();
+        EnableHomePanel();
+		DisableSoundSetting();
+        // Add any specific logic for showing the home UI here
+    }
 
 	public void EnableWelcomePanel()
 	{
@@ -59,34 +79,40 @@ public class UIManager : MonoBehaviour
 		WelcomePanel.SetActive(false);
 	}
 
-	public void EnableSoundSetting()
-	{
-		SoundSetting.SetActive(true);
-	}
+    public void EnableSoundSetting()
+    {
+        SoundSetting.SetActive(!musicState);
+		musicState = !musicState;
+    }
 
-	public void DisableSoundSetting()
+    public void DisableSoundSetting()
 	{
 		SoundSetting.SetActive(false);
 	}
 
-	private void EnableHomeUI()
+    public void ToggleSoundSetting(bool isOn)
+    {
+
+    }
+
+    private void EnableHomePanel()
 	{
-		homeUI.SetActive(true);
+		homePanel.SetActive(true);
 	}
 
-	private void DisableHomeUI()
+	private void DisableHomePanel()
 	{
-		homeUI.SetActive(false);
+		homePanel.SetActive(false);
 	}
 
-	private void EnableGameUI()
+	private void EnableGamePanel()
 	{
-		gameUI.SetActive(true);
+		gamePanel.SetActive(true);
 	}
 
-	private void DisableGameUI()
+	private void DisableGamePanel()
 	{
-		gameUI.SetActive(false);
+		gamePanel.SetActive(false);
 	}
 
 	public void setCoin(int coin)

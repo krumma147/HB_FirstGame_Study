@@ -30,10 +30,10 @@ public class Player : Character
 		//Nam trong khoang -1 -> 1 va = 0 neu ko bam j
 		horizontal = Input.GetAxisRaw("Horizontal");
 
-		//Debug.Log(horizontal);
-
-		// check if on ground so that player could jump
-		if (IsDead)
+        //Debug.Log(horizontal);
+        Debug.Log("Jumping state: " + isJumping);
+        // check if on ground so that player could jump
+        if (IsDead)
 		{
 			return;
 		}
@@ -41,7 +41,7 @@ public class Player : Character
 		{
 			if (isJumping)
 			{
-				//Debug.Log("Jumping when in ground!");
+				//Debug.Log("Jumping state: " + isJumping);
 				return;
 			}
 
@@ -148,9 +148,17 @@ public class Player : Character
 
 	public void Jump()
 	{
-		isJumping = true;
-		changeAnim("Jump");
-		rb.AddForce(jumpForce * Vector2.up);
+		if (isJumping==false)
+		{
+            isJumping = true;
+            changeAnim("Jump");
+            rb.AddForce(jumpForce * Vector2.up);
+		}
+		else
+		{
+			return;
+		}
+		
 	}
 
 	public void Throw()
