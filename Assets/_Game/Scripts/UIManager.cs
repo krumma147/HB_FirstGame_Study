@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
 	[SerializeField] GameObject gamePanel;
 	[SerializeField] GameObject homePanel;
+	[SerializeField] GameObject levelSelectPanel;
 	[SerializeField] GameObject SoundSetting;
 	[SerializeField] GameObject WelcomePanel;
 	[SerializeField] Text coinTxt;
@@ -48,26 +49,36 @@ public class UIManager : MonoBehaviour
         closeWelcomeButton.onClick.AddListener(DisableWelcomePanel);
 		
         //Disable GameUI and enable HomeUI
-		
-		DisableWelcomePanel();
 		ShowHomeUI();
 		//When click on start button then enable Game UI and disable HomeUI (stop game play too)
 	}
 
 	public void StartGame()
 	{
-        EnableGamePanel();
         DisableHomePanel();
+		EnableLevelSelection();
 		// Add your game start logic here
 	}
 
 	public void ShowHomeUI()
 	{
-        DisableGamePanel();
-        EnableHomePanel();
+		DisableGamePanel();
+		EnableHomePanel();
 		DisableSoundSetting();
-        // Add any specific logic for showing the home UI here
-    }
+		DisableLevelSelection();
+		DisableWelcomePanel();
+		// Add any specific logic for showing the home UI here
+	}
+
+	private void EnableLevelSelection()
+	{
+		levelSelectPanel.SetActive(true);
+	}
+
+	private void DisableLevelSelection()
+	{
+		levelSelectPanel.SetActive(false);
+	}
 
 	public void EnableWelcomePanel()
 	{
